@@ -47,6 +47,35 @@ class _PlayVideoFromVimeoIdState extends State<PlayVideoFromYoutube> {
                   fit: BoxFit.cover,
                 ),
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      controller.setVideoPlayBack(
+                        "${(controller.videoPlayerValue?.playbackSpeed ?? 1.0) - 0.1}",
+                      );
+                      setState(() {});
+                    },
+                    icon: const Icon(
+                      Icons.remove,
+                    ),
+                  ),
+                  Text(
+                    'Speed: ${controller.videoPlayerValue?.playbackSpeed ?? 1.0}',
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      controller.setVideoPlayBack(
+                          "${(controller.videoPlayerValue?.playbackSpeed ?? 1.0) + 0.1}");
+                      setState(() {});
+                    },
+                    icon: const Icon(
+                      Icons.add,
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 40),
               _loadVideoFromUrl()
             ],
