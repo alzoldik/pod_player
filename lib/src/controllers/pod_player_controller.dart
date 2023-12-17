@@ -156,8 +156,12 @@ class PodPlayerController {
   Future<void> unMute() async => _ctr.unMute();
 
   /// change the play speed of the video
-  Future<void> setVideoPlayBack(String speed) async => _ctr.setVideoPlayBack("$speed");
+  Future<void> setVideoPlayBack(String speed) async =>
+      _ctr.setVideoPlayBack("$speed");
 
+  /// change the play speed of the video
+  Future<void> changeVideoQuality(int? quality) async =>
+      _ctr.changeVideoQuality(quality);
 
   /// toggle the volume
   Future<void> toggleVolume() async {
