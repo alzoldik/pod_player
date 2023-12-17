@@ -11,6 +11,8 @@ class _PodVideoQualityController extends _PodVideoController {
   ///invokes callback from external controller
   VoidCallback? onVimeoVideoQualityChanged;
 
+  List<VideoQalityUrls> get videoUrls => vimeoOrVideoUrls;
+
   ///*vimeo player configs
   ///
   ///get all  `quality urls`
