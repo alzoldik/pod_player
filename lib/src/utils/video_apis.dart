@@ -114,36 +114,56 @@ class VideoApis {
     try {
       final yt = YoutubeExplode();
       final urls = <VideoQalityUrls>[];
+
       if (live) {
+        // Handle live streams (typically limited to 360p or a single quality)
         final url = await yt.videos.streamsClient.getHttpLiveStreamUrl(
           VideoId(youtubeIdOrUrl),
         );
         urls.add(
           VideoQalityUrls(
-            quality: 360,
+            quality: 360, // Live streams are often capped at 360p
             url: url,
           ),
         );
       } else {
+        // Fetch the stream manifest for recorded videos
         final manifest =
             await yt.videos.streamsClient.getManifest(youtubeIdOrUrl);
-        urls.addAll(
-          manifest.muxed.map(
-            (element) => VideoQalityUrls(
-              quality: int.parse(element.qualityLabel.split('p')[0]),
-              url: element.url.toString(),
+
+        // 1. Add muxed streams (combined audio and video)
+        urls
+          ..addAll(
+            manifest.muxed.map(
+              (element) => VideoQalityUrls(
+                quality: int.parse(element.qualityLabel
+                    .split('p')[0]), // Extract quality label
+                url: element.url.toString(),
+              ),
             ),
-          ),
-        );
+          )
+
+          // 2. Add video-only streams (for higher-quality options like 720p, 1080p)
+          ..addAll(
+            manifest.videoOnly.map(
+              (element) => VideoQalityUrls(
+                quality: int.parse(element.qualityLabel
+                    .split('p')[0]), // Extract quality label
+                url: element.url.toString(),
+              ),
+            ),
+          );
       }
-      // Close the YoutubeExplode's http client.
+
+      // Close the YoutubeExplode client
       yt.close();
+
       return urls;
     } catch (error) {
       if (error.toString().contains('XMLHttpRequest')) {
         log(
           podErrorString(
-            '(INFO) To play youtube video in WEB, Please enable CORS in your browser',
+            '(INFO) To play YouTube video in WEB, please enable CORS in your browser',
           ),
         );
       }
@@ -151,4 +171,48 @@ class VideoApis {
       rethrow;
     }
   }
+  // static Future<List<VideoQalityUrls>?> getYoutubeVideoQualityUrls(
+  //   String youtubeIdOrUrl,
+  //   bool live,
+  // ) async {
+  //   try {
+  //     final yt = YoutubeExplode();
+  //     final urls = <VideoQalityUrls>[];
+  //     if (live) {
+  //       final url = await yt.videos.streamsClient.getHttpLiveStreamUrl(
+  //         VideoId(youtubeIdOrUrl),
+  //       );
+  //       urls.add(
+  //         VideoQalityUrls(
+  //           quality: 360,
+  //           url: url,
+  //         ),
+  //       );
+  //     } else {
+  //       final manifest =
+  //           await yt.videos.streamsClient.getManifest(youtubeIdOrUrl);
+  //       urls.addAll(
+  //         manifest.muxed.map(
+  //           (element) => VideoQalityUrls(
+  //             quality: int.parse(element.qualityLabel.split('p')[0]),
+  //             url: element.url.toString(),
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //     // Close the YoutubeExplode's http client.
+  //     yt.close();
+  //     return urls;
+  //   } catch (error) {
+  //     if (error.toString().contains('XMLHttpRequest')) {
+  //       log(
+  //         podErrorString(
+  //           '(INFO) To play youtube video in WEB, Please enable CORS in your browser',
+  //         ),
+  //       );
+  //     }
+  //     debugPrint('===== YOUTUBE API ERROR: $error ==========');
+  //     rethrow;
+  //   }
+  // }
 }
