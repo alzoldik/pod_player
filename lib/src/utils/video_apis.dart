@@ -132,27 +132,27 @@ class VideoApis {
             await yt.videos.streamsClient.getManifest(youtubeIdOrUrl);
 
         // 1. Add muxed streams (combined audio and video)
-        urls
-          ..addAll(
-            manifest.muxed.map(
-              (element) => VideoQalityUrls(
-                quality: int.parse(element.qualityLabel
-                    .split('p')[0]), // Extract quality label
-                url: element.url.toString(),
-              ),
-            ),
-          )
+        // urls
+        //   ..addAll(
+        //     manifest.muxed.map(
+        //       (element) => VideoQalityUrls(
+        //         quality: int.parse(element.qualityLabel
+        //             .split('p')[0]), // Extract quality label
+        //         url: element.url.toString(),
+        //       ),
+        //     ),
+        //   )
 
-          // 2. Add video-only streams (for higher-quality options like 720p, 1080p)
-          ..addAll(
-            manifest.videoOnly.map(
-              (element) => VideoQalityUrls(
-                quality: int.parse(element.qualityLabel
-                    .split('p')[0]), // Extract quality label
-                url: element.url.toString(),
-              ),
+        // 2. Add video-only streams (for higher-quality options like 720p, 1080p)
+        urls.addAll(
+          manifest.videoOnly.map(
+            (element) => VideoQalityUrls(
+              quality: int.parse(
+                  element.qualityLabel.split('p')[0]), // Extract quality label
+              url: element.url.toString(),
             ),
-          );
+          ),
+        );
       }
 
       // Close the YoutubeExplode client
